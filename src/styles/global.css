@@ -1,0 +1,206 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+:root {
+  /* Core palette */
+  --pink: #ff69b4;
+  --hot-pink: #ff1493;
+  --neon-pink: #ff00ff;
+  --cyan: #00ffff;
+  --neon-green: #39ff14;
+  --purple: #9b59b6;
+  --gold: #ffd700;
+  --red: #ff0000;
+  --orange: #ff6600;
+
+  /* Backgrounds */
+  --bg-dark: #0a0a0a;
+  --bg-darker: #050505;
+  --bg-panel: #1a1a2e;
+  --bg-card: #16213e;
+
+  /* Win98 colors */
+  --win98-bg: #c0c0c0;
+  --win98-title: #000080;
+  --win98-title-text: #ffffff;
+  --win98-border-light: #ffffff;
+  --win98-border-dark: #808080;
+  --win98-border-darker: #404040;
+  --win98-button: #c0c0c0;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-pink: var(--pink);
+
+  /* Fonts */
+  --font-pixel: 'Press Start 2P', cursive;
+  --font-retro: 'VT323', monospace;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-retro);
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text y="18" font-size="16">✨</text></svg>') 4 4, auto;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--pink);
+  text-shadow: 0 0 8px var(--pink);
+}
+
+button {
+  font-family: var(--font-retro);
+  cursor: pointer;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-pixel);
+  line-height: 1.4;
+}
+
+p, span, li, label, input, textarea {
+  font-family: var(--font-retro);
+  font-size: 1.25rem;
+}
+
+::selection {
+  background: var(--hot-pink);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--win98-bg);
+  border-left: 1px solid var(--win98-border-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--win98-bg);
+  border: 2px outset var(--win98-border-light);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+::-webkit-scrollbar-button {
+  background: var(--win98-bg);
+  border: 2px outset var(--win98-border-light);
+  height: 16px;
+}
+
+/* Utility classes */
+.pixel-text {
+  font-family: var(--font-pixel);
+  image-rendering: pixelated;
+}
+
+.retro-text {
+  font-family: var(--font-retro);
+}
+
+.neon-text {
+  text-shadow:
+    0 0 7px currentColor,
+    0 0 10px currentColor,
+    0 0 21px currentColor,
+    0 0 42px currentColor;
+}
+
+.rainbow-text {
+  background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: rainbow-shift 3s linear infinite;
+}
+
+.glow-pink {
+  text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink), 0 0 40px var(--hot-pink);
+}
+
+.glow-cyan {
+  text-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan);
+}
+
+.glow-green {
+  text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.page-content {
+  flex: 1;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: 60px;
+}
+
+.text-center { text-align: center; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+@media (max-width: 768px) {
+  html { font-size: 14px; }
+  .page-content {
+    padding: var(--space-md) var(--space-sm);
+    padding-top: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  html { font-size: 13px; }
+}

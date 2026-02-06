@@ -1,0 +1,380 @@
+/* Windows 98 Style Components */
+
+.win98-window {
+  background: var(--win98-bg);
+  border: 2px solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  box-shadow: 1px 1px 0 0 #000;
+  color: #000;
+}
+
+.win98-titlebar {
+  background: linear-gradient(90deg, var(--win98-title), #1084d0);
+  color: var(--win98-title-text);
+  padding: 3px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  user-select: none;
+}
+
+.win98-titlebar-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-titlebar-btn {
+  width: 16px;
+  height: 14px;
+  background: var(--win98-bg);
+  border: 1px solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  font-size: 9px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+
+.win98-titlebar-btn:active {
+  border-color: var(--win98-border-darker) var(--win98-border-light) var(--win98-border-light) var(--win98-border-darker);
+}
+
+.win98-body {
+  padding: var(--space-md);
+}
+
+.win98-statusbar {
+  background: var(--win98-bg);
+  border-top: 1px solid var(--win98-border-dark);
+  padding: 2px 6px;
+  font-family: var(--font-retro);
+  font-size: 0.9rem;
+  display: flex;
+  gap: var(--space-md);
+}
+
+.win98-statusbar-section {
+  border: 1px solid;
+  border-color: var(--win98-border-dark) var(--win98-border-light) var(--win98-border-light) var(--win98-border-dark);
+  padding: 0 4px;
+  flex: 1;
+}
+
+/* Win98 Button */
+.win98-btn {
+  background: var(--win98-bg);
+  border: 2px solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  padding: 4px 16px;
+  font-family: var(--font-retro);
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #000;
+  outline: none;
+  min-width: 75px;
+}
+
+.win98-btn:active {
+  border-color: var(--win98-border-darker) var(--win98-border-light) var(--win98-border-light) var(--win98-border-darker);
+  padding: 5px 15px 3px 17px;
+}
+
+.win98-btn:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+.win98-btn--primary {
+  font-weight: bold;
+  box-shadow: inset -1px -1px 0 0 var(--win98-border-darker), inset 1px 1px 0 0 var(--win98-border-light);
+}
+
+/* Retro neon button */
+.retro-btn {
+  background: transparent;
+  border: 2px solid var(--pink);
+  color: var(--pink);
+  padding: 8px 24px;
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-btn:hover {
+  background: var(--pink);
+  color: #000;
+  box-shadow: 0 0 15px var(--pink), 0 0 30px var(--pink);
+  text-shadow: none;
+}
+
+.retro-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.retro-btn:hover::before {
+  left: 100%;
+}
+
+.retro-btn--cyan {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.retro-btn--cyan:hover {
+  background: var(--cyan);
+  box-shadow: 0 0 15px var(--cyan), 0 0 30px var(--cyan);
+}
+
+.retro-btn--green {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+}
+
+.retro-btn--green:hover {
+  background: var(--neon-green);
+  box-shadow: 0 0 15px var(--neon-green), 0 0 30px var(--neon-green);
+}
+
+.retro-btn--gold {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.retro-btn--gold:hover {
+  background: var(--gold);
+  box-shadow: 0 0 15px var(--gold), 0 0 30px var(--gold);
+}
+
+/* Retro input */
+.retro-input {
+  background: #000;
+  border: 2px solid var(--pink);
+  color: var(--pink);
+  padding: 8px 12px;
+  font-family: var(--font-retro);
+  font-size: 1.2rem;
+  outline: none;
+  width: 100%;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.retro-input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+  color: var(--cyan);
+}
+
+.retro-input::placeholder {
+  color: #555;
+}
+
+/* Pixel border */
+.pixel-border {
+  border-style: solid;
+  border-width: 4px;
+  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='4' height='4' fill='%23ff69b4'/%3E%3Crect x='4' width='4' height='4' fill='%23ff1493'/%3E%3Crect x='8' width='4' height='4' fill='%23ff69b4'/%3E%3Crect y='4' width='4' height='4' fill='%23ff1493'/%3E%3Crect x='4' y='4' width='4' height='4' fill='transparent'/%3E%3Crect x='8' y='4' width='4' height='4' fill='%23ff1493'/%3E%3Crect y='8' width='4' height='4' fill='%23ff69b4'/%3E%3Crect x='4' y='8' width='4' height='4' fill='%23ff1493'/%3E%3Crect x='8' y='8' width='4' height='4' fill='%23ff69b4'/%3E%3C/svg%3E") 4 stretch;
+}
+
+/* Retro checkbox */
+.retro-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 2px solid;
+  border-color: var(--win98-border-dark) var(--win98-border-light) var(--win98-border-light) var(--win98-border-dark);
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+}
+
+.retro-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: -3px;
+  left: 1px;
+  font-size: 14px;
+  color: #000;
+  font-weight: bold;
+}
+
+/* Retro progress bar */
+.retro-progress {
+  width: 100%;
+  height: 20px;
+  background: #fff;
+  border: 2px solid;
+  border-color: var(--win98-border-dark) var(--win98-border-light) var(--win98-border-light) var(--win98-border-dark);
+  overflow: hidden;
+}
+
+.retro-progress-bar {
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--win98-title) 0px,
+    var(--win98-title) 8px,
+    #1084d0 8px,
+    #1084d0 10px
+  );
+  transition: width 0.3s ease;
+}
+
+/* Neon progress bar */
+.neon-progress {
+  width: 100%;
+  height: 24px;
+  background: #111;
+  border: 2px solid var(--pink);
+  overflow: hidden;
+  position: relative;
+}
+
+.neon-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--hot-pink), var(--neon-pink));
+  box-shadow: 0 0 10px var(--pink);
+  transition: width 0.5s ease;
+}
+
+/* Tooltip */
+.retro-tooltip {
+  position: relative;
+}
+
+.retro-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  border: 1px solid var(--pink);
+  color: var(--pink);
+  padding: 4px 8px;
+  font-family: var(--font-retro);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+  z-index: 100;
+}
+
+.retro-tooltip:hover::after {
+  opacity: 1;
+}
+
+/* 7-segment LED display */
+.led-display {
+  font-family: var(--font-pixel);
+  color: var(--red);
+  background: #111;
+  border: 3px inset #333;
+  padding: 8px 16px;
+  text-shadow: 0 0 10px var(--red);
+  letter-spacing: 4px;
+  display: inline-block;
+}
+
+/* Win98 Taskbar */
+.taskbar {
+  background: var(--win98-bg);
+  border-top: 2px solid var(--win98-border-light);
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  gap: 4px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.taskbar-start {
+  background: var(--win98-bg);
+  border: 2px solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  padding: 2px 8px;
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: #000;
+  height: 28px;
+}
+
+.taskbar-start:active {
+  border-color: var(--win98-border-darker) var(--win98-border-light) var(--win98-border-light) var(--win98-border-darker);
+}
+
+.taskbar-items {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.taskbar-item {
+  background: var(--win98-bg);
+  border: 2px solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  padding: 2px 8px;
+  font-family: var(--font-retro);
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  color: #000;
+  text-decoration: none;
+}
+
+.taskbar-item:hover {
+  color: #000;
+  text-shadow: none;
+}
+
+.taskbar-item.active {
+  border-color: var(--win98-border-darker) var(--win98-border-light) var(--win98-border-light) var(--win98-border-darker);
+  background: #fff;
+}
+
+.taskbar-clock {
+  background: var(--win98-bg);
+  border: 1px solid;
+  border-color: var(--win98-border-dark) var(--win98-border-light) var(--win98-border-light) var(--win98-border-dark);
+  padding: 2px 8px;
+  font-family: var(--font-retro);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  color: #000;
+}

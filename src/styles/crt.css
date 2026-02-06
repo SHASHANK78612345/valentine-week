@@ -1,0 +1,100 @@
+/* CRT Monitor Effect */
+
+.crt-overlay {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
+
+/* Scanlines */
+.crt-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: crt-flicker 0.15s infinite;
+}
+
+/* Vignette */
+.crt-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+@keyframes crt-flicker {
+  0% { opacity: 0.27861; }
+  5% { opacity: 0.34769; }
+  10% { opacity: 0.23604; }
+  15% { opacity: 0.90626; }
+  20% { opacity: 0.18128; }
+  25% { opacity: 0.83891; }
+  30% { opacity: 0.65583; }
+  35% { opacity: 0.67807; }
+  40% { opacity: 0.26559; }
+  45% { opacity: 0.84693; }
+  50% { opacity: 0.96019; }
+  55% { opacity: 0.08594; }
+  60% { opacity: 0.20313; }
+  65% { opacity: 0.71988; }
+  70% { opacity: 0.53455; }
+  75% { opacity: 0.37288; }
+  80% { opacity: 0.71428; }
+  85% { opacity: 0.70419; }
+  90% { opacity: 0.78490; }
+  95% { opacity: 0.24498; }
+  100% { opacity: 0.44159; }
+}
+
+/* Subtle version - barely noticeable flicker */
+.crt-overlay--subtle::before {
+  animation: crt-flicker-subtle 4s infinite;
+  opacity: 0.5;
+}
+
+@keyframes crt-flicker-subtle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.48; }
+  51% { opacity: 0.52; }
+}
+
+/* CRT toggle button */
+.crt-toggle {
+  position: fixed;
+  bottom: 48px;
+  right: 8px;
+  z-index: 10000;
+  background: var(--win98-bg);
+  border: 2px solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  padding: 4px 8px;
+  font-family: var(--font-retro);
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #000;
+}
+
+.crt-toggle:active {
+  border-color: var(--win98-border-darker) var(--win98-border-light) var(--win98-border-light) var(--win98-border-darker);
+}

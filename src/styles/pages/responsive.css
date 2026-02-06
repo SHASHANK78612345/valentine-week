@@ -1,0 +1,14 @@
+/* Mobile responsive overrides */
+
+@media (max-width: 640px) {
+  /* KissDay & TeddyDay: stack side-by-side grids vertically */
+  .two-panel-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Smaller wheel on mobile */
+  .wheel-container {
+    width: 220px !important;
+    height: 220px !important;
+  }
+}
