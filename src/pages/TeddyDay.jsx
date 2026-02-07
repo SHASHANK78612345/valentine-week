@@ -1,68 +1,271 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import RetroWindow from '../components/retro/RetroWindow';
+import GlitchText from '../components/retro/GlitchText';
+import { fireConfetti, fireConfettiCannon } from '../components/particles/ConfettiExplosion';
 
-const ACCESSORIES = [
-  { id: 'top-hat', emoji: '🎩', name: 'Top Hat', slot: 'head', tooltip: 'For the distinguished teddy of culture' },
-  { id: 'crown', emoji: '👑', name: 'Crown', slot: 'head', tooltip: 'Because you deserve royalty (the teddy, I mean)' },
-  { id: 'cowboy', emoji: '🤠', name: 'Cowboy Hat', slot: 'head', tooltip: 'Yeehaw! This bear means business' },
-  { id: 'bow', emoji: '🎀', name: 'Bow', slot: 'head', tooltip: 'Cute? Check. Adorable? Double check.' },
-  { id: 'sunglasses', emoji: '😎', name: 'Sunglasses', slot: 'eyes', tooltip: 'Too cool for the toy shelf' },
-  { id: 'glasses', emoji: '🤓', name: 'Nerd Glasses', slot: 'eyes', tooltip: 'Smart AND huggable' },
-  { id: 'monocle', emoji: '🧐', name: 'Monocle', slot: 'eyes', tooltip: 'Hmm, yes, quite the sophisticated plushie' },
-  { id: 'scarf', emoji: '🧣', name: 'Scarf', slot: 'neck', tooltip: 'For a teddy who runs cold (emotionally stable though)' },
-  { id: 'tie', emoji: '👔', name: 'Necktie', slot: 'neck', tooltip: 'Business casual bear reporting for duty' },
-  { id: 'bowtie', emoji: '🎀', name: 'Bowtie', slot: 'neck', tooltip: 'Bow ties are cool — the 11th Doctor said so' },
-  { id: 'cape', emoji: '🦸', name: 'Cape', slot: 'body', tooltip: 'Not all heroes wear capes. This one does.' },
-  { id: 'tutu', emoji: '🩰', name: 'Tutu', slot: 'body', tooltip: 'Pirouette! Plié! Fall over because you\'re a stuffed bear!' },
-  { id: 'heart', emoji: '❤️', name: 'Heart', slot: 'hand', tooltip: 'Holding a heart. How on the nose can you get?' },
-  { id: 'rose', emoji: '🌹', name: 'Rose', slot: 'hand', tooltip: 'A rose by any other name... is still held by a teddy' },
-  { id: 'sword', emoji: '⚔️', name: 'Sword', slot: 'hand', tooltip: 'Sir Teddy of the Round Coffee Table' },
-  { id: 'wand', emoji: '🪄', name: 'Magic Wand', slot: 'hand', tooltip: 'Expecto PAW-tronum!' },
+const CONVERSATION = [
+  {
+    teddy: "Suniye suniye... aapke liye ek baat hai. Bohot dino se rok ke rakhi thi. Aaj bol hi deta hoon... 🥺",
+    responses: [
+      "Arre baap re, kya hone wala hai",
+      "Tune meri Maggi phir kha li kya?",
+      "Yeh confession mat kar dena please..."
+    ],
+  },
+  {
+    teddy: "Are you Jio's 4G? Because ever since you came into my life, everything is unlimited and I can't stop buffering around you. 📶",
+    responses: [
+      "Bhai... that was smoother than Amul butter",
+      "Mera network toh already drop ho raha hai",
+      "Sir, aap ek stuffed toy ho. Chill."
+    ],
+  },
+  {
+    teddy: "Tum Maggi ho mere 2-minute break ki. Tum chai ho meri Monday morning ki. Tum last episode ho meri Netflix binge ki. Basically tum hi tum ho. 🍜☕",
+    responses: [
+      "Maggi se compare kiya?! ...okay that's love",
+      "Monday chai is SACRED. Don't play with me.",
+      "Itna sab hoon toh salary bhi do meri"
+    ],
+  },
+  {
+    teddy: "Main SRK hoon aur tum meri Kajol. Main arms spread karke train ke door pe khada hoon. Pakadogi ya nahi? DDLJ music plays... 🚂🎶",
+    effect: 'shake',
+    responses: [
+      "Bhai train chhoot jayegi, jaldi bol",
+      "Palat... PALAT... okay fine I'm looking",
+      "SRK ke paas dimples hain, tere paas cotton hai"
+    ],
+  },
+  {
+    teddy: "Tum mere code ka missing semicolon ho — technically without you bhi chal jaata, but pura project CRASH. heart.exe has stopped working. Segfault in feelings. Core dumped. 💔",
+    effect: 'glitch',
+    responses: [
+      "Ctrl+Z karke feelings undo kar le bhai",
+      "Yeh toh Stack Overflow pe bhi nahi milega",
+      "...achha that was genuinely beautiful yaar??"
+    ],
+  },
+  {
+    teddy: "Tere liye main Bahubali 1 AND 2 back-to-back dekhunga — with INTERVAL SAMOSA BREAK. Phir Baahubali ne Kattappa ko kyun maara wala discussion bhi karunga. FIVE HOURS. For you. 🍿",
+    effect: 'shake+confetti',
+    responses: [
+      "FIVE HOURS?! Plus samosa?! Yeh toh serious hai.",
+      "Kattappa discussion is the TRUE test of love",
+      "Okay... tu sachchi mujhse pyaar karta hai 🥹"
+    ],
+  },
+  {
+    teddy: "Sun... main sirf ek teddy hoon. Polyester ka bana, cotton se bhara, aur thoda sa pagalpan andar se. But agar yeh rui ka dil dhadak sakta na... toh sirf tere liye dhadakta. Toh bol na... be my Valentine? 🧸💕",
+    effect: 'confetti-cannon',
+    responses: [
+      "...haan bhai, haan. Tu jeet gaya drama king 🥹",
+      "Ek teddy ne mujhe emotional kar diya. Kya life hai.",
+      "HEART.EXE PE HI PIGHAL GAYI THI MAIN 💕"
+    ],
+  },
 ];
 
-const SLOT_POSITIONS = {
-  head: { top: '2%', left: '50%', transform: 'translateX(-50%)' },
-  eyes: { top: '18%', left: '50%', transform: 'translateX(-50%)' },
-  neck: { top: '35%', left: '50%', transform: 'translateX(-50%)' },
-  body: { top: '50%', left: '50%', transform: 'translateX(-50%)' },
-  hand: { top: '55%', left: '80%', transform: 'translateX(-50%)' },
-};
+const FINAL_MESSAGE = "YAAAY! 🎉🧸💕 *does full Govinda dance on bed* MUJHE PATA THA interval samosa line kaam karegi! Aaj se tu meri aur main tera. Teddy Day ki kasam — yeh polyester ka dil sirf tere naam hai! 🎊💕";
 
-export default function TeddyDay() {
-  const [equipped, setEquipped] = useState({});
-  const [selectedAccessory, setSelectedAccessory] = useState(null);
-  const [hoveredItem, setHoveredItem] = useState(null);
+function TypingIndicator() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px' }}>
+      <span style={{ fontSize: '0.85rem', color: '#999', fontFamily: 'var(--font-retro)' }}>
+        Guddu Teddy is typing
+      </span>
+      <span className="typing-dots" style={{ display: 'inline-flex', gap: '3px' }}>
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              background: '#DEB887',
+              animation: `typingBounce 1.2s ease-in-out ${i * 0.2}s infinite`,
+            }}
+          />
+        ))}
+      </span>
+    </div>
+  );
+}
 
-  const handleAccessoryClick = useCallback((accessory) => {
-    setSelectedAccessory((prev) => (prev?.id === accessory.id ? null : accessory));
-  }, []);
-
-  const handleSlotClick = useCallback((slot) => {
-    if (selectedAccessory && selectedAccessory.slot === slot) {
-      setEquipped((prev) => ({ ...prev, [slot]: selectedAccessory }));
-      setSelectedAccessory(null);
-    }
-  }, [selectedAccessory]);
-
-  const handleTeddyClick = useCallback(() => {
-    if (selectedAccessory) {
-      setEquipped((prev) => ({ ...prev, [selectedAccessory.slot]: selectedAccessory }));
-      setSelectedAccessory(null);
-    }
-  }, [selectedAccessory]);
-
-  const removeAccessory = useCallback((slot) => {
-    setEquipped((prev) => {
-      const next = { ...prev };
-      delete next[slot];
-      return next;
-    });
-  }, []);
-
-  const equippedCount = Object.keys(equipped).length;
+function ChatBubble({ message, isUser, effect, animate }) {
+  const isGlitch = effect === 'glitch';
+  const isShake = effect === 'shake' || effect === 'shake+confetti';
 
   return (
-    <div className="container" style={{ maxWidth: 900 }}>
+    <div
+      className={`${animate ? 'animate-fade-in' : ''} ${isShake ? 'animate-shake' : ''}`}
+      style={{
+        display: 'flex',
+        justifyContent: isUser ? 'flex-end' : 'flex-start',
+        alignItems: 'flex-start',
+        gap: '8px',
+        marginBottom: '12px',
+      }}
+    >
+      {!isUser && (
+        <div style={{
+          fontSize: '1.5rem',
+          flexShrink: 0,
+          width: '32px',
+          height: '32px',
+          background: '#2a1a30',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px solid #DEB887',
+        }}>
+          🧸
+        </div>
+      )}
+      <div
+        style={{
+          background: isUser ? '#ff69b4' : '#DEB887',
+          color: isUser ? '#fff' : '#1a1020',
+          padding: '10px 14px',
+          borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+          maxWidth: '75%',
+          fontFamily: 'var(--font-retro)',
+          fontSize: '1rem',
+          lineHeight: 1.4,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+          wordBreak: 'break-word',
+        }}
+      >
+        {isGlitch ? (
+          <GlitchText text={message} style={{ color: '#1a1020', fontSize: '1rem' }} />
+        ) : (
+          message
+        )}
+      </div>
+      {isUser && (
+        <div style={{
+          fontSize: '1.2rem',
+          flexShrink: 0,
+          width: '32px',
+          height: '32px',
+          background: '#2a1030',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px solid #ff69b4',
+        }}>
+          🫵
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function TeddyDay() {
+  const [stage, setStage] = useState(0);
+  const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(true);
+  const [showResponses, setShowResponses] = useState(false);
+  const [completed, setCompleted] = useState(false);
+  const chatRef = useRef(null);
+
+  const scrollToBottom = useCallback(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, []);
+
+  // Show teddy message with typing delay
+  useEffect(() => {
+    if (completed) return;
+
+    setIsTyping(true);
+    setShowResponses(false);
+
+    const typingDelay = stage === 0 ? 1500 : 1800;
+    const timer = setTimeout(() => {
+      const conv = CONVERSATION[stage];
+      setMessages((prev) => [
+        ...prev,
+        { text: conv.teddy, isUser: false, effect: conv.effect, animate: true },
+      ]);
+      setIsTyping(false);
+
+      // Fire effects
+      if (conv.effect === 'shake+confetti') {
+        setTimeout(() => fireConfetti({ particleCount: 60, spread: 80 }), 300);
+      }
+      if (conv.effect === 'confetti-cannon') {
+        setTimeout(() => fireConfettiCannon(), 300);
+      }
+
+      // Show response buttons after a short delay
+      setTimeout(() => setShowResponses(true), 500);
+    }, typingDelay);
+
+    return () => clearTimeout(timer);
+  }, [stage, completed]);
+
+  // Auto-scroll when messages change or typing starts
+  useEffect(() => {
+    const timer = setTimeout(scrollToBottom, 100);
+    return () => clearTimeout(timer);
+  }, [messages, isTyping, scrollToBottom]);
+
+  const handleResponse = useCallback((responseText) => {
+    setShowResponses(false);
+
+    // Add user message
+    setMessages((prev) => [
+      ...prev,
+      { text: responseText, isUser: true, animate: true },
+    ]);
+
+    if (stage < CONVERSATION.length - 1) {
+      // Advance to next stage
+      setTimeout(() => setStage((s) => s + 1), 800);
+    } else {
+      // Final stage — show ending
+      setIsTyping(true);
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          { text: FINAL_MESSAGE, isUser: false, animate: true },
+        ]);
+        setIsTyping(false);
+        setCompleted(true);
+        fireConfettiCannon();
+      }, 2000);
+    }
+  }, [stage]);
+
+  const handleRestart = useCallback(() => {
+    setStage(0);
+    setMessages([]);
+    setIsTyping(true);
+    setShowResponses(false);
+    setCompleted(false);
+  }, []);
+
+  const currentConv = CONVERSATION[stage];
+  const statusText = completed
+    ? 'Guddu Teddy pagal ho gaya hai 💕'
+    : isTyping
+      ? '🧸 Guddu Teddy is typing...'
+      : `Stage ${stage + 1} of ${CONVERSATION.length}`;
+
+  return (
+    <div className="container" style={{ maxWidth: 700 }}>
+      {/* Typing animation keyframes */}
+      <style>{`
+        @keyframes typingBounce {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+          30% { transform: translateY(-8px); opacity: 1; }
+        }
+      `}</style>
+
       <header style={{ textAlign: 'center', marginBottom: '24px' }}>
         <h1
           className="pixel-text"
@@ -71,181 +274,147 @@ export default function TeddyDay() {
           🧸 Day 4: Teddy Day 🧸
         </h1>
         <p style={{ color: 'var(--text-secondary)' }}>
-          {selectedAccessory
-            ? `Click on the teddy to place: ${selectedAccessory.emoji} ${selectedAccessory.name}`
-            : 'Select an accessory, then click the teddy to dress it up!'}
+          Guddu Teddy ka dil bhar aaya hai...
         </p>
       </header>
 
-      <div className="two-panel-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', alignItems: 'start' }}>
-        {/* Teddy Display */}
-        <RetroWindow title="teddy_dresser.exe" statusBar={`Accessories: ${equippedCount}/5 slots`}>
+      <RetroWindow title="TeddyMessenger.exe" statusBar={statusText}>
+        {/* Chat header */}
+        <div style={{
+          background: 'linear-gradient(180deg, #3a2050 0%, #2a1535 100%)',
+          padding: '8px 12px',
+          borderBottom: '2px solid #DEB887',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          margin: '-16px -16px 0 -16px',
+        }}>
+          <span style={{ fontSize: '1.3rem' }}>🧸</span>
+          <span style={{
+            fontFamily: 'var(--font-retro)',
+            fontSize: '1.1rem',
+            color: '#DEB887',
+          }}>
+            Chat with: Guddu Teddy
+          </span>
+          <span style={{
+            marginLeft: 'auto',
+            fontSize: '0.75rem',
+            color: '#39ff14',
+            fontFamily: 'var(--font-retro)',
+          }}>
+            ● Online
+          </span>
+        </div>
+
+        {/* Chat messages area */}
+        <div
+          ref={chatRef}
+          style={{
+            background: '#1a1020',
+            border: '2px inset #333',
+            padding: '16px',
+            minHeight: '300px',
+            maxHeight: '400px',
+            overflowY: 'auto',
+            marginTop: '12px',
+          }}
+        >
+          {messages.map((msg, i) => (
+            <ChatBubble
+              key={i}
+              message={msg.text}
+              isUser={msg.isUser}
+              effect={msg.effect}
+              animate={msg.animate}
+            />
+          ))}
+          {isTyping && <TypingIndicator />}
+        </div>
+
+        {/* Response buttons */}
+        {showResponses && !completed && (
           <div
-            onClick={handleTeddyClick}
+            className="animate-fade-in"
             style={{
-              background: '#1a1020',
-              padding: '20px',
-              border: '2px inset #333',
-              position: 'relative',
-              minHeight: '350px',
-              cursor: selectedAccessory ? 'pointer' : 'default',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              flexDirection: 'column',
+              gap: '8px',
+              marginTop: '12px',
             }}
           >
-            {/* Teddy bear built from emoji */}
-            <div style={{ position: 'relative', width: '200px', height: '300px' }}>
-              {/* Base teddy */}
-              <div style={{
-                fontSize: '8rem',
-                textAlign: 'center',
-                lineHeight: 1,
-                filter: 'drop-shadow(0 0 10px rgba(222,184,135,0.3))',
-                userSelect: 'none',
-              }}>
-                🧸
-              </div>
-
-              {/* Equipped accessories */}
-              {Object.entries(equipped).map(([slot, acc]) => (
-                <div
-                  key={slot}
-                  onClick={(e) => { e.stopPropagation(); removeAccessory(slot); }}
-                  style={{
-                    position: 'absolute',
-                    ...SLOT_POSITIONS[slot],
-                    fontSize: '2.5rem',
-                    cursor: 'pointer',
-                    zIndex: 10,
-                    filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.5))',
-                    transition: 'transform 0.2s',
-                  }}
-                  title={`Click to remove ${acc.name}`}
-                  className="animate-pop-in"
-                >
-                  {acc.emoji}
-                </div>
-              ))}
-
-              {/* Slot indicators when accessory selected */}
-              {selectedAccessory && !equipped[selectedAccessory.slot] && (
-                <div
-                  onClick={(e) => { e.stopPropagation(); handleSlotClick(selectedAccessory.slot); }}
-                  style={{
-                    position: 'absolute',
-                    ...SLOT_POSITIONS[selectedAccessory.slot],
-                    width: '50px',
-                    height: '50px',
-                    border: '2px dashed var(--cyan)',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    zIndex: 5,
-                  }}
-                  className="animate-pulse"
-                />
-              )}
-            </div>
+            {currentConv.responses.map((resp, i) => (
+              <button
+                key={i}
+                className="retro-btn"
+                onClick={() => handleResponse(resp)}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '10px 14px',
+                  fontSize: '0.75rem',
+                  lineHeight: 1.4,
+                }}
+              >
+                {resp}
+              </button>
+            ))}
           </div>
-        </RetroWindow>
+        )}
+      </RetroWindow>
 
-        {/* Accessories Panel */}
-        <RetroWindow title="accessories.dll" statusBar="Tap an item, then tap the teddy">
-          <div style={{ background: '#1a1020', padding: '12px', border: '2px inset #333' }}>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '8px',
-              }}
-            >
-              {ACCESSORIES.map((acc) => {
-                const isEquipped = Object.values(equipped).some((e) => e.id === acc.id);
-                const isSelected = selectedAccessory?.id === acc.id;
-                return (
-                  <div
-                    key={acc.id}
-                    onClick={() => !isEquipped && handleAccessoryClick(acc)}
-                    onMouseEnter={() => setHoveredItem(acc.id)}
-                    onMouseLeave={() => setHoveredItem(null)}
-                    style={{
-                      background: isSelected ? '#333' : isEquipped ? '#0a0a0a' : '#1a1a2e',
-                      border: `2px solid ${isSelected ? 'var(--cyan)' : isEquipped ? '#333' : '#444'}`,
-                      padding: '8px 4px',
-                      textAlign: 'center',
-                      cursor: isEquipped ? 'default' : 'pointer',
-                      opacity: isEquipped ? 0.4 : 1,
-                      transition: 'all 0.2s',
-                      position: 'relative',
-                      boxShadow: isSelected ? '0 0 10px var(--cyan)' : 'none',
-                    }}
-                  >
-                    <div style={{ fontSize: '1.8rem' }}>{acc.emoji}</div>
-                    <div style={{
-                      fontFamily: 'var(--font-retro)',
-                      fontSize: '0.7rem',
-                      color: isEquipped ? '#555' : 'var(--text-secondary)',
-                      marginTop: '2px',
-                    }}>
-                      {acc.name}
-                    </div>
-                    {/* Tooltip */}
-                    {hoveredItem === acc.id && !isEquipped && (
-                      <div style={{
-                        position: 'absolute',
-                        bottom: 'calc(100% + 6px)',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        background: '#000',
-                        border: '1px solid var(--pink)',
-                        color: 'var(--pink)',
-                        padding: '4px 8px',
-                        fontFamily: 'var(--font-retro)',
-                        fontSize: '0.75rem',
-                        whiteSpace: 'nowrap',
-                        zIndex: 50,
-                      }}>
-                        {acc.tooltip}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Reset button */}
-            {equippedCount > 0 && (
-              <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                <button
-                  className="retro-btn"
-                  onClick={() => setEquipped({})}
-                  style={{ fontSize: '0.6rem' }}
-                >
-                  RESET TEDDY
-                </button>
-              </div>
-            )}
-          </div>
-        </RetroWindow>
-      </div>
-
-      {/* Fun message */}
-      {equippedCount >= 3 && (
+      {/* Completion card */}
+      {completed && (
         <div
-          className="animate-fade-in-up"
+          className="animate-fade-in-scale"
           style={{
             background: 'var(--bg-panel)',
             border: '2px solid #DEB887',
-            padding: '20px',
+            padding: '24px',
             textAlign: 'center',
             marginTop: '24px',
           }}
         >
-          <p style={{ color: '#DEB887', fontSize: '1.2rem' }}>
-            {equippedCount >= 5
-              ? '🧸 MAXIMUM DRIP ACHIEVED! This teddy is ready for Fashion Week! 🌟'
-              : '🧸 Looking good! Keep accessorizing — this teddy deserves the best! ✨'}
+          <div style={{
+            fontFamily: 'var(--font-pixel)',
+            fontSize: 'clamp(0.6rem, 2vw, 0.85rem)',
+            color: '#DEB887',
+            marginBottom: '8px',
+          }}>
+            🏆 TEDDY PYAAR ACHIEVEMENT UNLOCKED 🏆
+          </div>
+          <p style={{
+            fontFamily: 'var(--font-retro)',
+            fontSize: '1.1rem',
+            color: 'var(--text-secondary)',
+            marginBottom: '4px',
+          }}>
+            Tune ek stuffed bear ke 7 rounds ka drama jhel liya. Respect.
           </p>
+          <p style={{
+            fontFamily: 'var(--font-retro)',
+            fontSize: '1.1rem',
+            color: '#ff69b4',
+            marginBottom: '6px',
+          }}>
+            Happy Teddy Day, yaar! 🧸💕
+          </p>
+          <p style={{
+            fontFamily: 'var(--font-retro)',
+            fontSize: '0.95rem',
+            color: 'var(--text-secondary)',
+            marginBottom: '16px',
+            lineHeight: 1.5,
+          }}>
+            Chahe duniya kuch bhi kahe — tera Guddu hamesha tere saath hai. Rui ka dil, asli pyaar. Iss Teddy Day, kisi ko gale lagaa le aur bol de — "Tu meri Maggi hai, 2 minutes mein nahi, hamesha ke liye." 💛
+          </p>
+          <button
+            className="retro-btn"
+            onClick={handleRestart}
+            style={{ fontSize: '0.7rem' }}
+          >
+            🔄 CHAT AGAIN
+          </button>
         </div>
       )}
     </div>
